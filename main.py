@@ -12,7 +12,7 @@ def main():
     cwd = Path.cwd()
     pferd = Pferd(cwd)
 
-    config = ConfigLoader("config.ini")
+    config = ConfigLoader(str(Path(__file__).parent / "config.ini"))
 
     username = config.username
     password = config.password
