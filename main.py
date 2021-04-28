@@ -9,7 +9,8 @@ from mail_sender import MailSender
 
 
 def main():
-    pferd = Pferd(Path(__file__).parent)
+    cwd = Path.cwd()
+    pferd = Pferd(cwd)
 
     config = ConfigLoader("config.ini")
 
