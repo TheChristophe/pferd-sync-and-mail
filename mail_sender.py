@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 from config import ConfigLoader
@@ -11,7 +12,7 @@ import jinja2
 class MailSender:
     def __init__(self, config: ConfigLoader):
         self.config = config
-        self.jinja = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
+        self.jinja = jinja2.Environment(loader=jinja2.FileSystemLoader(str(Path(__file__).parent)))
 
     def _new_mail(self, subject: str):
         multipart = MIMEMultipart()

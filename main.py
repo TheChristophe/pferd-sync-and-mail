@@ -11,8 +11,9 @@ from mail_sender import MailSender
 def main():
     cwd = Path.cwd()
     pferd = Pferd(cwd)
+    script_dir = Path(__file__).parent
 
-    config = ConfigLoader(str(Path(__file__).parent / "config.ini"))
+    config = ConfigLoader(str(script_dir / "config.ini"))
 
     username = config.username
     password = config.password
@@ -37,7 +38,7 @@ def main():
         # do not need to use windows path/character replacement, rclone provides character substitution for OneDrive
         # this gives similar-looking characters (https://rclone.org/onedrive/)
         pferd.ilias_kit(target=course["name"], course_id=course["id"], username=username, password=password,
-                        cookies="cookies.txt")
+                        cookies=str(script_dir / "cookies.txt"))
 
     # Prints a summary listing all new, modified or deleted files
     pferd.enable_logging()
