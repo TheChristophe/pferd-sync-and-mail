@@ -2,3 +2,5 @@
 venv/
 
 config.ini
+
+.idea/
