@@ -47,8 +47,8 @@ def main():
 
     summary = pferd._download_summary
     # List[Path] -> List[str]
-    new_files = list(map(lambda f: str(f), summary.new_files))
-    updated_files = list(map(lambda f: str(f), summary.modified_files))
+    new_files = list(map(lambda f: str(f.relative_to(cwd)), summary.new_files))
+    updated_files = list(map(lambda f: str(f.relative_to(cwd)), summary.modified_files))
     mail.mail_update(new_files, updated_files)
 
 
