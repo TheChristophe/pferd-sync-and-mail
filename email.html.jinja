@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+    <title>Pferd sync update</title>
+</head>
+<body>
+    <u>Pferd sync update:</u>
+    <br/>
+    <div style="border-left: 6px solid #ffc400;background-color: #ffecab;padding: 0.7em">
+        New files: <br/>
+        <ul>
+            {% if new_files %}
+                {% for entry in new_files %}
+                <li>{{ entry }}</li>
+                {% endfor %}
+            {% else %}
+                <li>None.</li>
+            {% endif %}
+        </ul>
+        <br/>
+        Updated files: <br/>
+        <ul>
+            {% if new_files %}
+                {% for entry in updated_files %}
+                <li>{{ entry }}</li>
+                {% endfor %}
+            {% else %}
+                <li>None.</li>
+            {% endif %}
+        </ul>
+    </div>
+</body>
+</html>
