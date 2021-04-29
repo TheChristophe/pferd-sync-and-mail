@@ -4,3 +4,6 @@ venv/
 config.ini
 
 .idea/
+
+__pycache__/
+cookies.txt
