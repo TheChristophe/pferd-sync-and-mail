@@ -19,6 +19,18 @@ def main():
     password = config.password
 
     courses = [
+        # https://ilias.studium.kit.edu/goto_produktiv_crs_{id}.html
+        # WS 2020/2021
+        # { "title": "Höhere Mathematik 1", "id": "1253943" },
+        # { "title": "Theoretische Grundlagen der Informatik", "id": "1271270" },
+        # { "title": "Telematik", "id": "1252518" },
+        # { "title": "Softwaretechnik 2", "id": "1231416" },
+        # { "title": "WT/Statistik", "id": "1270362" },
+        # { "title": "Programmierparadigmen", "id": "1261491" },
+        # { "title": "BWL Finanzwirtschaft und Rechnungswesen", "id": "1280402" },
+        # { "title":  "BWL Rechnungswesen", "id": "1280397" },
+        # { "title":  "Algorithmen 2", "id": "1289021" },
+
         {"name": "Höhere Mathematik 2", "id": "1460343"},
         {"name": "Datenbanksysteme", "id": "1463481"},
         {"name": "Rechnernetze", "id": "1455593"},
