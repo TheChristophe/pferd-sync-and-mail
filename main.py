@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-from pathlib import Path
+from pathlib import Path, PurePath
 
 from PFERD import Pferd
+from PFERD.organizer import ConflictType, FileConflictResolution
 
 from config import ConfigLoader
 from mail_sender import MailSender
@@ -46,11 +47,20 @@ def main():
         {"name": "BWL MM: Marketing Mix", "id": "1453890"}
     ]
 
+    def resolve_no_delete(_path: PurePath, conflict: ConflictType) -> FileConflictResolution:
+        # Update files
+        if conflict == ConflictType.FILE_OVERWRITTEN:
+            return FileConflictResolution.DESTROY_EXISTING
+        if conflict == ConflictType.MARKED_FILE_OVERWRITTEN:
+            return FileConflictResolution.DESTROY_EXISTING
+        # But do not delete them
+        return FileConflictResolution.KEEP_EXISTING
+
     for course in courses:
         # do not need to use windows path/character replacement, rclone provides character substitution for OneDrive
         # this gives similar-looking characters (https://rclone.org/onedrive/)
         pferd.ilias_kit(target=course["name"], course_id=course["id"], username=username, password=password,
-                        cookies=str(script_dir / "cookies.txt"))
+                        cookies=str(script_dir / "cookies.txt"), file_conflict_resolver=resolve_no_delete)
 
     # Prints a summary listing all new, modified or deleted files
     pferd.enable_logging()
