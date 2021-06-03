@@ -23,9 +23,6 @@ def print_report(self) -> None:
 
     config = ConfigLoader(str(script_dir / "config.ini"))
 
-    username = config.username
-    password = config.password
-
     mail = MailSender(config)
 
     for name in self._crawlers_to_run:
@@ -59,7 +56,8 @@ def print_report(self) -> None:
 
     # List[Path] -> List[str]
     def map_to_local(path: Path):
-        return path #str(path.relative_to(cwd))
+        return path  # str(path.relative_to(cwd))
+
     added_files = list(map(map_to_local, added_files))
     changed_files = list(map(map_to_local, changed_files))
     deleted_files = list(map(map_to_local, deleted_files))
@@ -70,34 +68,6 @@ def print_report(self) -> None:
 def main():
     Pferd.print_report = print_report
     pferd_main()
-
-    courses = [
-        # https://ilias.studium.kit.edu/goto_produktiv_crs_{id}.html
-        # WS 2020/2021
-        # { "title": "Höhere Mathematik 1", "id": "1253943" },
-        # { "title": "Theoretische Grundlagen der Informatik", "id": "1271270" },
-        # { "title": "Telematik", "id": "1252518" },
-        # { "title": "Softwaretechnik 2", "id": "1231416" },
-        # { "title": "WT/Statistik", "id": "1270362" },
-        # { "title": "Programmierparadigmen", "id": "1261491" },
-        # { "title": "BWL Finanzwirtschaft und Rechnungswesen", "id": "1280402" },
-        # { "title":  "BWL Rechnungswesen", "id": "1280397" },
-        # { "title":  "Algorithmen 2", "id": "1289021" },
-
-        {"name": "Höhere Mathematik 2", "id": "1460343"},
-        {"name": "Datenbanksysteme", "id": "1463481"},
-        {"name": "Rechnernetze", "id": "1455593"},
-        {"name": "Numerik", "id": "1466370"},
-        {"name": "Lineare Algebra 2 für Informatiker", "id": "1471707"},
-
-        {"name": "BWL S&O: Unternehmensführung und Strategisches Management", "id": "1459771"},
-        {"name": "BWL S&O: Problemlösung, Kommunikation und Leadership", "id": "1456738"},
-
-        {"name": "BWL EoF: Financial Management", "id": "1469665"},
-        {"name": "BWL EoF: Investments", "id": "1478322"},
-
-        {"name": "BWL MM: Marketing Mix", "id": "1453890"}
-    ]
 
 
 if __name__ == "__main__":
