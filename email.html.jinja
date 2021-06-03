@@ -17,10 +17,30 @@
             {% endif %}
         </ul>
         <br/>
-        Updated files: <br/>
+        Changed files: <br/>
         <ul>
-            {% if updated_files %}
-                {% for entry in updated_files %}
+            {% if changed_files %}
+                {% for entry in changed_files %}
+                <li>{{ entry }}</li>
+                {% endfor %}
+            {% else %}
+                <li>None.</li>
+            {% endif %}
+        </ul>
+        Deleted files: <br/>
+        <ul>
+            {% if deleted_files %}
+                {% for entry in deleted_files %}
+                <li>{{ entry }}</li>
+                {% endfor %}
+            {% else %}
+                <li>None.</li>
+            {% endif %}
+        </ul>
+        Not-deleted files: <br/>
+        <ul>
+            {% if not_deleted_files %}
+                {% for entry in not_deleted_files %}
                 <li>{{ entry }}</li>
                 {% endfor %}
             {% else %}

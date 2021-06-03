@@ -1,2 +1,3 @@
-git+https://github.com/Garmelon/PFERD@v2.6.1#egg=PFERD
-jinja2
+git+https://github.com/Garmelon/PFERD@v3.0.1#egg=PFERD
+jinja2~=3.0.1
+rich~=10.2.2

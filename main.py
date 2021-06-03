@@ -1,23 +1,75 @@
 #!/usr/bin/python
 
-from pathlib import Path, PurePath
+from pathlib import Path
 
-from PFERD import Pferd
-from PFERD.organizer import ConflictType, FileConflictResolution
+from PFERD.pferd import Pferd
+from PFERD.__main__ import main as pferd_main
+from PFERD.logging import log
+from PFERD.utils import fmt_path
 
 from config import ConfigLoader
 from mail_sender import MailSender
+from rich.markup import escape
 
 
-def main():
+def print_report(self) -> None:
+    added_files = []
+    changed_files = []
+    deleted_files = []
+    not_deleted_files = []
+
     cwd = Path.cwd()
-    pferd = Pferd(cwd)
     script_dir = Path(__file__).parent
 
     config = ConfigLoader(str(script_dir / "config.ini"))
 
     username = config.username
     password = config.password
+
+    mail = MailSender(config)
+
+    for name in self._crawlers_to_run:
+        crawler = self._crawlers.get(name)
+        if crawler is None:
+            continue  # Crawler failed to load
+
+        log.report("")
+        log.report(f"[bold bright_cyan]Report[/] for {escape(name)}")
+
+        something_changed = False
+        for path in sorted(crawler.report.added_files):
+            something_changed = True
+            added_files.append(path)
+            log.report(f"  [bold bright_green]Added[/] {fmt_path(path)}")
+        for path in sorted(crawler.report.changed_files):
+            something_changed = True
+            changed_files.append(path)
+            log.report(f"  [bold bright_yellow]Changed[/] {fmt_path(path)}")
+        for path in sorted(crawler.report.deleted_files):
+            something_changed = True
+            deleted_files.append(path)
+            log.report(f"  [bold bright_magenta]Deleted[/] {fmt_path(path)}")
+        for path in sorted(crawler.report.not_deleted_files):
+            something_changed = True
+            not_deleted_files.append(path)
+            log.report(f"  [bold bright_magenta]Not deleted[/] {fmt_path(path)}")
+
+        if not something_changed:
+            log.report("  Nothing changed")
+
+    # List[Path] -> List[str]
+    def map_to_local(path: Path):
+        return path #str(path.relative_to(cwd))
+    added_files = list(map(map_to_local, added_files))
+    changed_files = list(map(map_to_local, changed_files))
+    deleted_files = list(map(map_to_local, deleted_files))
+    not_deleted_files = list(map(map_to_local, not_deleted_files))
+    mail.mail_update(added_files, changed_files, deleted_files, not_deleted_files)
+
+
+def main():
+    Pferd.print_report = print_report
+    pferd_main()
 
     courses = [
         # https://ilias.studium.kit.edu/goto_produktiv_crs_{id}.html
@@ -46,33 +98,6 @@ def main():
 
         {"name": "BWL MM: Marketing Mix", "id": "1453890"}
     ]
-
-    def resolve_no_delete(_path: PurePath, conflict: ConflictType) -> FileConflictResolution:
-        # Update files
-        if conflict == ConflictType.FILE_OVERWRITTEN:
-            return FileConflictResolution.DESTROY_EXISTING
-        if conflict == ConflictType.MARKED_FILE_OVERWRITTEN:
-            return FileConflictResolution.DESTROY_EXISTING
-        # But do not delete them
-        return FileConflictResolution.KEEP_EXISTING
-
-    for course in courses:
-        # do not need to use windows path/character replacement, rclone provides character substitution for OneDrive
-        # this gives similar-looking characters (https://rclone.org/onedrive/)
-        pferd.ilias_kit(target=course["name"], course_id=course["id"], username=username, password=password,
-                        cookies=str(script_dir / "cookies.txt"), file_conflict_resolver=resolve_no_delete)
-
-    # Prints a summary listing all new, modified or deleted files
-    pferd.enable_logging()
-    pferd.print_summary()
-
-    mail = MailSender(config)
-
-    summary = pferd._download_summary
-    # List[Path] -> List[str]
-    new_files = list(map(lambda f: str(f.relative_to(cwd)), summary.new_files))
-    updated_files = list(map(lambda f: str(f.relative_to(cwd)), summary.modified_files))
-    mail.mail_update(new_files, updated_files)
 
 
 if __name__ == "__main__":

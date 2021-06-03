@@ -45,7 +45,9 @@ class MailSender:
         self.smtp.send_message(multipart)
         self._finalize_smtp()
 
-    def mail_update(self, new_files: List[str], updated_files: List[str]):
+    def mail_update(self, new_files: List[str], changed_files: List[str], deleted_files: List[str],
+                    not_deleted_files: List[str]):
         template = self.jinja.get_template('email.html.jinja')
-        text = template.render(new_files=new_files, updated_files=updated_files)
+        text = template.render(new_files=new_files, changed_files=changed_files, deleted_files=deleted_files,
+                               not_deleted_files=not_deleted_files)
         self.send_mail_html(text, "PFERD Sync Notification")
