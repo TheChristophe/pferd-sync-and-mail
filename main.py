@@ -11,19 +11,16 @@ from config import ConfigLoader
 from mail_sender import MailSender
 from rich.markup import escape
 
+added_files = []
+changed_files = []
+deleted_files = []
+not_deleted_files = []
 
 def print_report(self) -> None:
-    added_files = []
-    changed_files = []
-    deleted_files = []
-    not_deleted_files = []
-
-    cwd = Path.cwd()
-    script_dir = Path(__file__).parent
-
-    config = ConfigLoader(str(script_dir / "config.ini"))
-
-    mail = MailSender(config)
+    global added_files
+    global changed_files
+    global deleted_files
+    global not_deleted_files
 
     for name in self._crawlers_to_run:
         crawler = self._crawlers.get(name)
@@ -54,20 +51,32 @@ def print_report(self) -> None:
         if not something_changed:
             log.report("  Nothing changed")
 
+
+def main():
+    cwd = Path.cwd()
+    script_dir = Path(__file__).parent
+
+    config = ConfigLoader(str(script_dir / "config.ini"))
+
+    mail = MailSender(config)
+
+    Pferd.print_report = print_report
+    pferd_main()
+
+    global added_files
+    global changed_files
+    global deleted_files
+    global not_deleted_files
+
     # List[Path] -> List[str]
     def map_to_local(path: Path):
-        return path  # str(path.relative_to(cwd))
+        return str(path)  # str(path.relative_to(cwd))
 
     added_files = list(map(map_to_local, added_files))
     changed_files = list(map(map_to_local, changed_files))
     deleted_files = list(map(map_to_local, deleted_files))
     not_deleted_files = list(map(map_to_local, not_deleted_files))
     mail.mail_update(added_files, changed_files, deleted_files, not_deleted_files)
-
-
-def main():
-    Pferd.print_report = print_report
-    pferd_main()
 
 
 if __name__ == "__main__":
